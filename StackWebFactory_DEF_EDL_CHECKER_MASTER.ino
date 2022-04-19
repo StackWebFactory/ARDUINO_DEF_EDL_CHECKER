@@ -129,7 +129,7 @@ lcd.createChar(1, FHAUT);//import fleche bas
 lcd.createChar(2, Check);//import fleche bas
 lcd.createChar(3, ohm);//import fleche bas
 lcd.setCursor(0,0);
-lcd.print("HUBER_DEF_EDL");
+lcd.print("SWF_DEF_EDL");
 lcd.setCursor(0,1);
 lcd.print("CHECKER V_2.1.0");
 digitalWrite(ledvert, HIGH);
