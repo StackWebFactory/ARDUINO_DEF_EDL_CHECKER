@@ -45,7 +45,7 @@ unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
- if (Serial.available()>0)
+ if (Serial.available())
  {
     radio.stopListening(); 
     int n=Serial.readBytesUntil('>',buf,sizeof buf-1);
@@ -71,7 +71,7 @@ unsigned long currentMillis = millis();
   radio.write(&donnees, sizeof(donnees));
   Serial.flush();
   }}
-  delay(250);
+  delay(150);
   radio.startListening();
 if(radio.available()) {
    radio.read(&recevoir, sizeof(recevoir));
