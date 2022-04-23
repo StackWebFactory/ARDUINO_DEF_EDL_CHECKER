@@ -1,11 +1,9 @@
+String VERSION = "CHECKER V_2.1.1";
 #include <SoftwareSerial.h>
-SoftwareSerial mySerial(0, 1);
-
-int keyIndex = 0;    
 //initialisation LCD
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-//initialisation cla
+//initialisation keypad
 #include <Keypad.h>
 const byte ROWS = 4; // 4 rows
 const byte COLS = 4; // 3 columns
@@ -35,17 +33,14 @@ String ATTENTEOLD;
 String SECURITE;
 String SECURITEOLD;
 int key = NO_KEY;
-//int statledrouge = HIGH;//initialisation de l'etat led rouge
-//int statledvert = HIGH; //initialisation de l'etat led vert
 int Rk_3 = 10; //Valeur résistance de comparaison 
+
 //initialisation de l'interval de rafreshisement 
 unsigned long previousMillis = 0;
 unsigned long currentMillis = 0;
 unsigned long stoprelay = 0;
 const long seconde1 = 1000;
-long mseconde500 = 500;
-const long seconde2 = 2000;
-int buzz;
+
 //initialisation caractere special fleche haut et bas
 byte FBAS[] = {
   B00000,
@@ -95,29 +90,16 @@ byte ohm [] = {
 float sinVal;        // crée une variable de type "float" appelée "SinVal" et qui contient la valeur sinusoïdale qui fera monter et descendre la tonalité.
 int toneVal;         // crée une variable de type "int" appelée "toneVal" et qui représente la fréquence de la note produite en hertz (Hz).
 char mystr[50]; //Initialized variable to store recieved data
-String SENDERALIM;
-String SENDERATT;
-String SENDERSECU;
+
+
+
 int relay = 10;
 int ledrouge = 13;
 int ledvert = 11;
 int buzzer= 12;
-int countledstatvert=0;
-int blinkledvert=0;
-int ledvertfix = 0;
-unsigned long previousMillisledvert = 0;
-int statledvert=HIGH;
-int countledstatrouge=0;
-int blinkledrouge=0;
-int ledrougefix = 0;
-unsigned long previousMillisledrouge = 0;
-int statledrouge=HIGH;
-int buzzerrouge;
-int buzzervert;
 void setup() {
 
 Serial.begin(9600) ; // start serial com
-mySerial.begin(9600);
 lcd.begin();//start lcd
 lcd.backlight();// allumage du retro-éclairage
 pinMode(ledrouge,OUTPUT);// def pin led rouge
@@ -129,34 +111,41 @@ lcd.createChar(1, FHAUT);//import fleche bas
 lcd.createChar(2, Check);//import fleche bas
 lcd.createChar(3, ohm);//import fleche bas
 lcd.setCursor(0,0);
-lcd.print("SWF_DEF_EDL");
+lcd.print("SWF_MDL_EDL");
 lcd.setCursor(0,1);
-lcd.print("CHECKER V_2.1.0");
+lcd.print(VERSION);
 digitalWrite(ledvert, HIGH);
 digitalWrite(ledrouge, HIGH);
 delay(2000);
 }
 void loop() {
-LCD(); // bloucle MENU LCD
+LCD(); //Déclanchement de la boucle principal de test
 }
 
 /************************************************************************************************************************/
+//Boucle de test des valeur 
 void OHM(){
+//regulation du scanne des entrée analogique (1x/Seconde)
 unsigned long currentMillis = millis();
 if (currentMillis - previousMillis >= seconde1) {
 previousMillis = currentMillis;
+//Double lecture de A0 pour vider le buffer puis conversion en Ohm
 float value = analogRead(0);
 delay(5);
 value = analogRead(0);
 ALIM = (Rk_3 * value / (1024 - value)*1000);
+//Double lecture de A1 pour vider le buffer puis conversion en Ohm
 float value1 = analogRead(1);
 delay(5);
 value1 = analogRead(1);
 ATT = (Rk_3 * value1 / (1024 - value1)*1000);
+//Double lecture de A2 pour vider le buffer puis conversion en Ohm
 float value2 = analogRead(2);
 delay(5);
 value2 = analogRead(2);
 SECU = (Rk_3 * value2 / (1024 - value2)*1000);
+
+//conversion des données brut
 if (MENU > 10){
 if (ATT < 0 or ATT > 4800){ATTENTE = "ATT: LINE OPEN";SSECURITE= 999;digitalWrite(ledvert, HIGH);noTone(buzzer);}
 if (SECU < 0 or SECU > 4800){SECURITE = "SECU: LINE OPEN";SATTENTE= 999;digitalWrite(ledrouge, HIGH);noTone(buzzer);}
@@ -175,6 +164,8 @@ if (SECU == 0 or (SECU > 0 & SECU < 150)){SECURITE = "SECU: COURT CIRCUIT";SATTE
 if (ALIM > 6000 or ALIM < 0) {ALIM = 9999;}
 if (ATT > 6000 or ATT < 0) {ATT = 9999;}
 if (SECU > 6000 or SECU < 0) {SECU = 9999;}
+
+//Emission des info vers port serie pour reception sur arduino nano 
 Serial.print("Z");
 Serial.print(ALIM);
 Serial.print("Y");
@@ -192,8 +183,11 @@ Serial.println(">");}
 }
 
 /************************************************************************************************************************/
-void MENUVOID(){
+//Boucle gestion des touche
+void KEYPADVOID(){
 char key = keypad.getKey();
+
+//Reception des commande distante depuis le port serie 
 if (Serial.available()){
   int READ = Serial.read();
   if (READ == '1') key = 'B';
@@ -202,7 +196,7 @@ if (Serial.available()){
   //Serial.print(READ);
   }
   
-  
+//configuration des touche de keypad pour acces au menu
  if (key != NO_KEY){
  tone (12, 1000, 50); // allume le buzzer actif arduino
  if (key == '*' and MENU < 5 and MENU > 1){MENU--;}
@@ -223,16 +217,17 @@ lcd.clear();
 key == NO_KEY;
     }
 }
+//Boucle principal affichage lcd et menu 
 void LCD(){
-// attendre 1 seconde avant la prochaine mesure
-while (MENU == 1) {
+//MENU 1 a 4 Menu principal de selection
+while (MENU == 1) { 
 digitalWrite(ledvert, HIGH);
 digitalWrite(ledrouge, HIGH);
 noTone(buzzer);
 if (MENU != MENUOLD){lcd.clear();}
 MENUOLD=1;
 MENUBACK=1;
-MENUVOID();
+KEYPADVOID();
 lcd.setCursor(0,0);
 lcd.print("CHOIX DU MODE");
 lcd.setCursor(0,1);
@@ -244,14 +239,14 @@ lcd.write(1);
 
 }
 
-while (MENU == 2) {
+while (MENU == 2) { 
 digitalWrite(ledvert, HIGH);
 digitalWrite(ledrouge, HIGH);
 noTone(buzzer);
 if (MENU != MENUOLD){lcd.clear();}
 MENUOLD=2;
 MENUBACK=2;
-MENUVOID();
+KEYPADVOID();
 lcd.setCursor(0,0);
 lcd.print("TEST VOLET / CCF");
 lcd.setCursor(0,1);
@@ -269,7 +264,7 @@ noTone(buzzer);
 if (MENU != MENUOLD){lcd.clear();}
 MENUOLD=3;
 MENUBACK=3;
-MENUVOID();
+KEYPADVOID();
 lcd.setCursor(0,0);
 lcd.print("TEST PCF");
 lcd.setCursor(0,1);
@@ -288,7 +283,7 @@ noTone(buzzer);
 if (MENU != MENUOLD){lcd.clear();}
 MENUOLD=4;
 MENUBACK=4;
-MENUVOID();
+KEYPADVOID();
 lcd.setCursor(0,0);
 lcd.print("TEST Ohmmetre");
 lcd.setCursor(0,1);
@@ -298,7 +293,7 @@ lcd.print("ATT");
 lcd.setCursor(12,1);
 lcd.print("SECU");
 }
-
+//MENU 12 a 14 Menu principal d'affichage des valeur et de test
 while (MENU == 12){
 if (MENU != MENUOLD){lcd.clear();}
 if (SECURITE != SECURITEOLD or ATTENTE != ATTENTEOLD){lcd.clear();}
@@ -306,7 +301,7 @@ SECURITEOLD=SECURITE;
 ATTENTEOLD=ATTENTE;
 MENUOLD=12;
 MENUBACK=12;
-MENUVOID();
+KEYPADVOID();
 OHM();
 lcd.setCursor(0,0);
 lcd.print(ATTENTE);
@@ -321,7 +316,7 @@ if (SECURITE != SECURITEOLD){lcd.clear();}
 SECURITEOLD=SECURITE;
 MENUOLD=13;
 MENUBACK=13;
-MENUVOID();
+KEYPADVOID();
 OHM();
 lcd.setCursor(0,0);
 lcd.print(SECURITE);
@@ -331,7 +326,7 @@ while (MENU == 14){
 if (MENU != MENUOLD){lcd.clear();}
 MENUOLD=14;
 MENUBACK=14;
-MENUVOID();
+KEYPADVOID();
 OHM();
 if (ALIM != ALIMOLD or ATT != ATTOLD or SECU != SECUOLD){lcd.clear();}
 lcd.setCursor(0,0);
@@ -350,14 +345,14 @@ lcd.setCursor(12,1);
 lcd.print(SECU);
 SECUOLD = SECU;
 }
-
+//MENU 20 & 21 declanchement du relay 
 while (MENU == 20){ 
 noTone(12);
 if (MENU != MENUOLD){lcd.clear();}
 if (ALIM != ALIMOLD){lcd.clear();}
 ALIMOLD = ALIM ;
 MENUOLD=20;
-MENUVOID();
+KEYPADVOID();
 OHM();
 lcd.setCursor(0,0);
 lcd.print("DECLANCHEMENT  X");
@@ -373,7 +368,7 @@ lcd.print("PRESS: A");
 while (MENU == 21){
 if (MENU != MENUOLD){lcd.clear(); unsigned long currentMillis = millis(); stoprelay=currentMillis+1500; digitalWrite(ledvert, HIGH);digitalWrite(ledrouge, HIGH);}
 MENUOLD=21;
-MENUVOID();
+KEYPADVOID();
 lcd.setCursor(0,0);
 lcd.print("DECLANCHEMENT ");
 lcd.setCursor(15,0);
