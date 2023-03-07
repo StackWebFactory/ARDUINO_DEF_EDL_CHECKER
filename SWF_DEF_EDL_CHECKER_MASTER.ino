@@ -146,6 +146,28 @@ value2 = analogRead(2);
 SECU = (Rk_3 * value2 / (1024 - value2)*1000);
 
 //conversion des données brut
+  //VALUE FOR EATON
+/* 
+if (MENU > 10){
+if (ATT < 0 or ATT > 4800){ATTENTE = "ATT: LINE OPEN";SSECURITE= 999;digitalWrite(ledvert, HIGH);noTone(buzzer);}
+if (SECU < 0 or SECU > 4800){SECURITE = "SECU: LINE OPEN";SATTENTE= 999;digitalWrite(ledrouge, HIGH);noTone(buzzer);}
+if (ATT > 5900 && ATT < 6300 ) {ATTENTE = "1 EN SECU";SSECURITE=1;digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(200);}
+if (ATT > 9500 && ATT < 10200 ) {ATTENTE = "2 EN SECU";SSECURITE=2;digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(200);}
+if (ATT > 13700 && ATT < 14100 ) {ATTENTE = "3 EN SECU";SSECURITE=3;digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(200);}
+if (ATT > 17400 && ATT < 18000 ) {ATTENTE = "4 EN SECU";SSECURITE=4;digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(50);digitalWrite(ledvert, LOW); tone(buzzer,2000); delay(50);digitalWrite(ledvert, HIGH); noTone(buzzer);delay(200);}
+if (SECU > 5900 && SECU < 6300 ) {SECURITE = "1 EN ATT";SATTENTE=1;digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(200);}
+if (SECU > 9500 && SECU < 10200 ) {SECURITE = "2 EN ATT";SATTENTE=2;digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(200);}
+if (SECU > 13700 && SECU < 14100 ) {SECURITE = "3 EN ATT";SATTENTE=3;digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(200);}
+if (SECU > 17400 && SECU < 18000 ) {SECURITE = "4 EN ATT";SATTENTE=4;digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(50);digitalWrite(ledrouge, LOW); tone(buzzer,800); delay(50);digitalWrite(ledrouge, HIGH); noTone(buzzer);delay(200);}
+if (ATT > 2100 && ATT < 2300 ) {ATTENTE = "0 EN SECU FL OK";SSECURITE=5;digitalWrite(ledvert, LOW);tone(buzzer,2000);}
+if (SECU > 2100 && SECU < 2300 ) {SECURITE = "0 EN ATT FL OK";SATTENTE=5;digitalWrite(ledrouge, LOW);tone(buzzer,800);}
+if (ATT == 0 or (ATT > 0 & ATT < 150)){ATTENTE = "ATT: COURT CIRCUIT";SSECURITE= 100; digitalWrite(ledvert, LOW);tone(buzzer,3000);} 
+if (SECU == 0 or (SECU > 0 & SECU < 150)){SECURITE = "SECU: COURT CIRCUIT";SATTENTE= 100;digitalWrite(ledrouge, LOW);tone(buzzer,3000);}
+if (ALIM == 6384 or ALIM < 0) {ALIM = 9999;}
+if (ATT == 6384 or ATT < 0) {ATT = 9999;}
+if (SECU == 6384 or SECU < 0) {SECU = 9999;}
+*/
+//VALUE FOR DEF 
 if (MENU > 10){
 if (ATT < 0 or ATT > 4800){ATTENTE = "ATT: LINE OPEN";SSECURITE= 999;digitalWrite(ledvert, HIGH);noTone(buzzer);}
 if (SECU < 0 or SECU > 4800){SECURITE = "SECU: LINE OPEN";SATTENTE= 999;digitalWrite(ledrouge, HIGH);noTone(buzzer);}
